@@ -153,7 +153,7 @@ spawn(function()
 			if SoulKing then
 				for _, v in pairs(workspace.NPCs:GetChildren()) do
 					if v.Name == "Soul King" then
-						toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0))
+						toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 200, 0))
 						local args = {
 							[1] = "Firefly",
 							[2] = {["cf"] = v.HumanoidRootPart.CFrame}
@@ -213,7 +213,7 @@ spawn(function()
 			if roger or hawkeye then
 				if roger then
 					while roger do
-						local rogerPosition = roger.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0)
+						local rogerPosition = roger.HumanoidRootPart.CFrame * CFrame.new(0, 200, 0)
 						toTarget(rogerPosition)
                         local npcs = game:GetService("Workspace").NPCs
 	local camera = game.Workspace.CurrentCamera
@@ -231,7 +231,7 @@ spawn(function()
 					end
 				elseif hawkeye then
 					while hawkeye do
-						local hawkeyePosition = hawkeye.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0)
+						local hawkeyePosition = hawkeye.HumanoidRootPart.CFrame * CFrame.new(0, 200, 0)
 						toTarget(hawkeyePosition)
                         local npcs = game:GetService("Workspace").NPCs
 	local camera = game.Workspace.CurrentCamera
