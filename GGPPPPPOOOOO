@@ -1,0 +1,336 @@
+-- [Tween Functions (toTarget)]
+local function toTarget(...)
+	local RealtargetPos = {...}
+	local targetPos = RealtargetPos[1]
+	local RealTarget
+	if typeof(targetPos) == "Vector3" then
+		RealTarget = CFrame.new(targetPos)
+	elseif typeof(targetPos) == "CFrame" then
+		RealTarget = targetPos
+	elseif typeof(targetPos) == "number" then
+		RealTarget = CFrame.new(unpack(RealtargetPos))
+	end
+	
+	if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Health == 0 then 
+		if tween then tween:Cancel() end 
+		repeat wait() until game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Health > 0
+		wait(0.2)
+	end
+	
+	local tweenfunc = {}
+	local Distance = (RealTarget.Position - game:GetService("Players").LocalPlayer.Character:WaitForChild("HumanoidRootPart").Position).Magnitude
+	local Speed = 43  -- Default speed
+	local BypassTp = false  -- Initialize with default value
+	
+	if FastTween then
+		Speed = (Distance < 400) and 43 or 43  -- Modify speed based on distance
+	end
+	
+	-- Bypass Teleport Logic
+	if BypassTp then
+		if Distance > 2000 then
+			pcall(function()
+				tween:Cancel()
+				fkwarp = false
+				local lastSpawnPoint = game:GetService("Players").LocalPlayer.Data:FindFirstChild("LastSpawnPoint").Value
+				if lastSpawnPoint == tostring(GetIsLand(RealTarget)) then
+					game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(15)
+					wait(0.1)
+					repeat wait() until game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").Health > 0
+				else
+					if game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").Health > 0 then
+						if not fkwarp then
+							if Three_World then
+								local targetPos = Vector3.new(-5079.44677734375, 313.7293395996094, -3151.065185546875)
+								if (targetPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude >= 1500 then
+									game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer('requestEntrance', targetPos)
+									Library:Notify('Lua Hub | Start Tp in 3', 1)
+	                                wait(1)
+	                                Library:Notify('Lua Hub | Start Tp in 2', 1)
+	                                wait(1)
+	                                Library:Notify('Lua Hub | Start Tp in 1', 1)
+	                                wait(0.5)
+								end
+								tween:cancel()
+							end
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = RealTarget
+							tween:cancel()
+						end
+						fkwarp = true
+					end
+					wait(0.08)
+					game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid"):ChangeState(15)
+					repeat wait() until game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid").Health > 0
+					tween:cancel()
+					wait(0.1)
+					Com("F_", "SetSpawnPoint")
+					wait(0.2)
+					tween:cancel()
+				end
+			end)
+		end
+	end
+
+	local tween_s = game:service"TweenService"
+	local info = TweenInfo.new(Distance / Speed, Enum.EasingStyle.Linear)
+	local tweenw, err = pcall(function()
+		tween = tween_s:Create(game.Players.LocalPlayer.Character["HumanoidRootPart"], info, {CFrame = RealTarget})
+		tween:Play()
+	end)
+
+	function tweenfunc:Stop()
+		tween:Cancel()
+	end 
+
+	function tweenfunc:Wait()
+		tween.Completed:Wait()
+	end 
+
+	return tweenfunc
+end
+
+local player = game.Players.LocalPlayer
+
+-- NoClip Function
+local function NoClip(state)
+	pcall(function()
+		local char = player.Character
+		for _, v in pairs(char:GetChildren()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = not state
+			end
+		end
+	end)
+end
+
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+	game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+local Window = OrionLib:MakeWindow({Name = "Silver hub promax", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local Tab = Window:MakeTab({
+	Name = "Tab 1",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local zzzzzz = 0
+
+Tab:AddToggle({
+	Name = "Auto Stack!",
+	Default = false,
+	Callback = function(Value)
+		_G.autostack = Value
+		spawn(function()
+			while _G.autostack do
+				local character = game.Players.LocalPlayer.Character
+				local backpack = game.Players.LocalPlayer.Backpack
+				local tool = backpack:FindFirstChild("Mera-Mera")
+				if tool then
+					character.Humanoid:EquipTool(tool)
+				end
+				task.wait(3)
+			end
+		end)
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Auto soul king!",
+	Default = false,
+	Callback = function(Value)
+		SK = Value
+	end    
+})
+
+spawn(function()
+	while wait() do
+		if SK then
+			local SoulKing = workspace.NPCs:FindFirstChild("Soul King")
+			if SoulKing then
+				for _, v in pairs(workspace.NPCs:GetChildren()) do
+					if v.Name == "Soul King" then
+						toTarget(v.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0))
+						local args = {
+							[1] = "Firefly",
+							[2] = {["cf"] = v.HumanoidRootPart.CFrame}
+						}
+						
+                    game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Skill"):InvokeServer(unpack(args))
+                end
+            end
+                else
+						toTarget(5134.1552734375, 138.95057678222656, -11852.591796875)
+
+			end
+		end
+	end
+end)
+spawn(function()
+			while wait() do
+                if SK then
+				local character = game.Players.LocalPlayer.Character
+				local backpack = game.Players.LocalPlayer.Backpack
+				local tool = backpack:FindFirstChild("Mera-Mera")
+				if tool then
+					character.Humanoid:EquipTool(tool)
+				end
+				task.wait(3)
+			end
+            end
+		end)
+Tab:AddToggle({
+	Name = "BypassFloat!",
+	Default = false,
+	Callback = function(Value)
+		BypassFloat = Value
+	end    
+})
+
+Tab:AddToggle({
+	Name = "no clip!",
+	Default = false,
+	Callback = function(Value)
+		Noclip = Value
+		spawn(function()
+			while wait() do
+				if Noclip then
+					NoClip(Noclip)
+				end
+			end
+		end)
+	end    
+})
+
+spawn(function()
+	while wait() do
+		if _G.autostack then
+			local roger = workspace.NPCs:FindFirstChild("Roger")
+			local hawkeye = workspace.NPCs:FindFirstChild("Hawk Eye")
+			if roger or hawkeye then
+				if roger then
+					while roger do
+						local rogerPosition = roger.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0)
+						toTarget(rogerPosition)
+                        local npcs = game:GetService("Workspace").NPCs
+	local camera = game.Workspace.CurrentCamera
+	local virtualInputManager = game:GetService("VirtualInputManager")
+	for _, npc in pairs(npcs:GetChildren()) do
+		if npc.Name == "Roger" or npc.Name == "Hawk Eye" then
+			local args = {
+				[1] = "Firefly",
+				[2] = {["cf"] = npc.HumanoidRootPart.CFrame}
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Skill"):InvokeServer(unpack(args))
+		end
+	end
+						task.wait(0.1)
+					end
+				elseif hawkeye then
+					while hawkeye do
+						local hawkeyePosition = hawkeye.HumanoidRootPart.CFrame * CFrame.new(0, 100, 0)
+						toTarget(hawkeyePosition)
+                        local npcs = game:GetService("Workspace").NPCs
+	local camera = game.Workspace.CurrentCamera
+	local virtualInputManager = game:GetService("VirtualInputManager")
+	for _, npc in pairs(npcs:GetChildren()) do
+		if npc.Name == "Roger" or npc.Name == "Hawk Eye" then
+			local args = {
+				[1] = "Firefly",
+				[2] = {["cf"] = npc.HumanoidRootPart.CFrame}
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Skill"):InvokeServer(unpack(args))
+		end
+	end
+						task.wait(0.1)
+					end
+				end
+			else
+				local targetPosition = CFrame.new(12781.3291015625, 25.473974227905273, 2765.704345703125)
+				toTarget(targetPosition)
+				game:GetService("VirtualInputManager"):SendKeyEvent(true, "V", false, game)
+				game:GetService("VirtualInputManager"):SendKeyEvent(false, "V", false, game)
+				task.wait(0.1)
+			end
+			task.wait(0.5)
+		end
+	end
+end)
+
+-- Handle Floating Bypass
+local function handleFloatingBypass()
+	while wait() do
+		if BypassFloat then
+				local hrp = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+				if hrp and not hrp:FindFirstChild("BodyVelocity1") then
+					if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit then
+						game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+					end
+					local BodyVelocity = Instance.new("BodyVelocity")
+					BodyVelocity.Name = "BodyVelocity1"
+					BodyVelocity.Parent = hrp
+					BodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+					BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+				end
+				for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false    
+					end
+				end
+			end
+			local args = {
+				[1] = "Sky Walk2",
+				[2] = {
+					["char"] = game:GetService("Players").LocalPlayer.Character,
+					["cf"] = CFrame.new(7992.7265625, -2071.75048828125, -17086.833984375) * CFrame.Angles(1.570796251296997, 1.9504859949392994e-09, -0.1507122814655304)
+				}
+			}
+			game:GetService("ReplicatedStorage").Events.Skill:InvokeServer(unpack(args))
+			task.wait(1.15)
+		end
+	end
+
+  spawn(function()
+  while wait() do
+      		if _G.autostack then
+                   local npcs = game:GetService("Workspace").NPCs
+	local camera = game.Workspace.CurrentCamera
+	local virtualInputManager = game:GetService("VirtualInputManager")
+	for _, npc in pairs(npcs:GetChildren()) do
+		if npc.Name == "Roger" or npc.Name == "Hawk Eye" then
+			local args = {
+				[1] = "Firefly",
+				[2] = {["cf"] = npc.HumanoidRootPart.CFrame}
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Skill"):InvokeServer(unpack(args))
+		end
+              end
+	end
+    end
+    end)
+-- Toggle handler for BypassFloat
+local function toggleBypassFloat(Value)
+	BypassFloat = Value
+	if BypassFloat then
+		-- Start handling floating bypass in a new thread
+		spawn(handleFloatingBypass)
+	end
+end
+
+Tab:AddToggle({
+	Name = "BypassFloat2!",
+	Default = false,
+	Callback = toggleBypassFloat
+})
+
+
+
+Tab:AddButton({
+	Name = "Insta tp roger/hawkeye Map!",
+	Callback = function()
+		toTarget(CFrame.new(12781.3291015625, 25.473974227905273, 2765.704345703125))
+	end    
+})
